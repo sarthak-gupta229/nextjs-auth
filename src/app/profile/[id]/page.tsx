@@ -10,10 +10,10 @@ export default async function UserProfile({
       <div className="flex flex-col w-full max-w-sm bg-[#171717] p-8 rounded-2xl border border-[#2e2e2e] gap-6 shadow-2xl">
         <h1 className="text-white text-3xl font-semibold">User Profile Page</h1>
         <div className="flex items-center gap-2">
-        <CircleUser size={100} color="white" />
+        <CircleUser size={100} strokeWidth={1.25} color="white" />
         <div className="flex flex-col">
-        <p className="text-white text-2xl">Name: {id}</p>
-        <p className="text-white text-1xl">Email:</p>
+        <p className="text-white text-2xl">Username: {id}</p>
+        <p className="text-gray-500 text-1xl">Email:</p>
         </div>
         </div>
         <button className="bg-white text-black font-semibold py-2.5 rounded-lg text-sm hover:bg-gray-200 transition-colors w-full">Logout</button>
