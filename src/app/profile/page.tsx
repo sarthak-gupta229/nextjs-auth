@@ -38,7 +38,6 @@ export default function ProfilePage() {
       const res = await axios.get('/api/users/me');
       const userId = res.data.data._id;
       console.log(userId);
-      toast.success("user details fetched successfully");
       setData(userId);
       router.push(`/profile/${userId}`);
     } catch (error: any) {
