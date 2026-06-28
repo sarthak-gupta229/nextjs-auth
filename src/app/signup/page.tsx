@@ -4,7 +4,7 @@ import React, { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import axios from 'axios';
 import { Eye, EyeOff } from 'lucide-react';
-import toast, { Toaster }  from 'react-hot-toast';
+import toast, { Toaster } from 'react-hot-toast';
 
 export default function SignupPage() {
   const router = useRouter();
@@ -24,7 +24,7 @@ export default function SignupPage() {
       const response = await axios.post('/api/users/signup', user);
       console.log('Signup success', response.data);
       toast.success('Signed up successfully!');
-      router.push('/login');
+      router.push('/verifyemail');
     } catch (error: any) {
       console.log('Signup failed', error.message);
 
@@ -115,7 +115,9 @@ export default function SignupPage() {
               {hidePassword ? <EyeOff size={16} /> : <Eye size={16} />}
             </button>
           </div>
-          <p className={`text-xs ${user.password && user.password.length<8?"text-red-500":"text-gray-500"} `}>
+          <p
+            className={`text-xs ${user.password && user.password.length < 8 ? 'text-red-500' : 'text-gray-500'} `}
+          >
             Must be at least 8 characters long.
           </p>
         </div>
