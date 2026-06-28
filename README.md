@@ -4,6 +4,24 @@ A full-stack authentication system built with **Next.js 16 (App Router)**, showc
 
 ---
 
+> [!NOTE]
+> **⚠️ Demo / Deployed Version Notice**
+>
+> This project uses **Mailtrap** — a fake SMTP server designed for **development and testing only**. Emails are captured in a sandbox inbox and are **never delivered to real email addresses**.
+>
+> This means if you visit the deployed version of this app, **signing up will not work** — you will not receive the verification email and your account will remain unverified.
+>
+> **To try the app, use this pre-verified test account:**
+>
+> | Field | Value |
+> |-------|-------|
+> | 📧 Email | `one@gmail.com` |
+> | 🔑 Password | `12345678` |
+>
+> Simply go to the **Login** page and sign in with the credentials above.
+
+---
+
 ## 📚 Table of Contents
 
 - [Overview](#overview)
