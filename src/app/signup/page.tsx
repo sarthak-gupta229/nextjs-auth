@@ -147,12 +147,12 @@ export default function SignupPage() {
           >
             Create Account
           </button>
-          <button
+          {/* <button
             type="button"
             className="w-full bg-transparent text-white font-semibold py-2.5 rounded-lg text-sm border border-gray-600 hover:bg-gray-800 transition-colors"
           >
             Sign up with Google
-          </button>
+          </button> */}
         </div>
 
         <p className="text-gray-500 text-sm text-center">
