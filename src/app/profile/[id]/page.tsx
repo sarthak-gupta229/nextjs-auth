@@ -29,12 +29,14 @@ export default function UserProfile({
       <div className="flex flex-col  max-w-sm bg-[#171717] p-8 rounded-2xl border border-[#2e2e2e] gap-6 shadow-2xl w-fit">
         <h1 className="text-white text-3xl font-semibold">User Profile Page</h1>
         <div className="flex items-center gap-2">
+
           <CircleUser size={100} strokeWidth={1.25} color="white" />
           <div className="flex flex-col w-fit">
             <p className="text-white ">ID:{id}</p>
             <p className="text-white ">Username: </p>
             <p className="text-gray-500 ">Email:</p>
           </div>
+
         </div>
         <button
           className="bg-white text-black font-semibold py-2.5 rounded-lg text-sm hover:bg-gray-200 transition-colors w-full"
