@@ -1,6 +1,12 @@
 import nodemailer from 'nodemailer';
 import User from '@/models/userModel';
 import bcryptjs from 'bcryptjs';
+import VerificationEmail from '@/components/email-template';
+import { render } from '@react-email/render';
+
+import { Resend } from 'resend';
+
+const resend = new Resend(process.env.RESENDEMAIL_KEY);
 
 export const sendEmail = async ({ email, emailType, userId }: any) => {
   try {
@@ -17,33 +23,26 @@ export const sendEmail = async ({ email, emailType, userId }: any) => {
       });
     }
 
-    const transport = nodemailer.createTransport({
-      host: process.env.MAILTRAP_SMTP_HOST,
-      port: Number(process.env.MAILTRAP_SMTP_PORT),
-      secure: false,
-      auth: {
-        user: process.env.MAILTRAP_SMTP_USER,
-        pass: process.env.MAILTRAP_SMTP_PASS,
-      },
+    const { data, error } = await resend.emails.send({
+      from: 'onboarding@resend.dev',
+      to: email,
+      subject:
+        emailType === 'VERIFY'
+          ? 'nextjs-auth | Verify your email'
+          : 'nextjs-auth | Reset your password',
+      react: VerificationEmail({
+        emailType,
+        hashedToken,
+        domain: process.env.DOMAIN!,
+      }),
     });
 
-    const mailOptions = {
-      from: 'guptasarthak229@gmail.com', // sender address
-      to: email, // list of recipients
-      subject:
-        emailType === 'VERIFY' ? 'Verify your email' : 'Reset your password',
-      text: `Please ${
-        emailType === 'VERIFY' ? 'verify your email' : 'reset your password'
-      } by visiting the following link:
+    if (error) {
+      console.error(error);
+      return { success: false, error: error.message };
+    }
 
-            ${process.env.DOMAIN}/verifyemail?token=${hashedToken}`,
-      html: `<p>Click <a href="${process.env.DOMAIN}/verifyemail?token=${hashedToken}">here</a> to ${emailType === 'VERIFY' ? 'verify your email' : 'reset your password'}
-            or copy and paste the link below in your browser. <br> ${process.env.DOMAIN}/verifyemail?token=${hashedToken}
-            </p>`,
-    };
-
-    const mailresponse = await transport.sendMail(mailOptions);
-    return mailresponse;
+    return { success: true, data };
   } catch (error: any) {
     throw new Error(error.message);
   }
