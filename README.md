@@ -1,24 +1,6 @@
 # 🔐 Next.js Authentication — JWT + Bcrypt + MongoDB
 
-A full-stack authentication system built with **Next.js 16 (App Router)**, showcasing industry-standard security practices using **JWT**, **Bcrypt**, **MongoDB**, and **Nodemailer** for email verification.
-
----
-
-> [!NOTE]
-> **⚠️ Demo / Deployed Version Notice**
->
-> This project uses **Mailtrap** — a fake SMTP server designed for **development and testing only**. Emails are captured in a sandbox inbox and are **never delivered to real email addresses**.
->
-> This means if you visit the deployed version of this app, **signing up will not work** — you will not receive the verification email and your account will remain unverified.
->
-> **To try the app, use this pre-verified test account:**
->
-> | Field | Value |
-> |-------|-------|
-> | 📧 Email | `one@gmail.com` |
-> | 🔑 Password | `12345678` |
->
-> Simply go to the **Login** page and sign in with the credentials above.
+A full-stack authentication system built with **Next.js 16 (App Router)**, showcasing industry-standard security practices using **JWT**, **Bcrypt**, **MongoDB**, and **Resend** for email verification.
 
 ---
 
@@ -41,7 +23,7 @@ A full-stack authentication system built with **Next.js 16 (App Router)**, showc
   - [HttpOnly Cookies](#httponly-cookies)
   - [Middleware Route Protection](#middleware-route-protection)
 - [Database — MongoDB & Mongoose](#database--mongodb--mongoose)
-- [Email — Nodemailer + Mailtrap](#email--nodemailer--mailtrap)
+- [Email — Resend](#email--resend)
 - [Environment Variables](#environment-variables)
 - [Getting Started](#getting-started)
 
@@ -69,8 +51,7 @@ This project is a **production-ready authentication boilerplate** that demonstra
 | **MongoDB + Mongoose** | NoSQL database & schema modeling |
 | **Bcryptjs** | Password hashing & token hashing |
 | **JSON Web Tokens (JWT)** | Stateless auth tokens |
-| **Nodemailer** | Sending verification/reset emails |
-| **Mailtrap** | SMTP sandbox for email testing |
+| **Resend** | Sending verification/reset emails |
 | **Tailwind CSS v4** | Utility-first styling |
 | **React Hot Toast** | Toast notifications |
 | **Lucide React** | Icon library |
@@ -122,18 +103,12 @@ User fills form  →  POST /api/users/signup
                           │
                     Hash userId → store as verifyToken (expires in 1hr)
                           │
-                    Send verification email via Nodemailer
+                    Send verification email via Resend
                           │
                     Return 201 success response
 ```
 
 **Key file:** `src/app/api/users/signup/route.ts`
-
-```ts
-const salt = await bcryptjs.genSalt(10);
-const hashedPassword = await bcryptjs.hash(password, salt);
-// Password is NEVER stored in plaintext
-```
 
 ---
 
@@ -184,12 +159,6 @@ User submits email + password  →  POST /api/users/login
 ```
 
 **Key file:** `src/app/api/users/login/route.ts`
-
-```ts
-const tokenData = { id: user._id, username: user.username, email: user.email };
-const token = jwt.sign(tokenData, process.env.TOKEN_SECRET!, { expiresIn: '1d' });
-response.cookies.set('token', token, { httpOnly: true });
-```
 
 ---
 
@@ -281,38 +250,19 @@ User clicks Logout  →  GET /api/users/logout
 
 Passwords are **never stored in plaintext**. Bcrypt is a one-way hashing algorithm designed to be slow (deliberately computationally expensive), making brute-force attacks infeasible.
 
-```ts
-// Signup — hashing
-const salt = await bcryptjs.genSalt(10); // cost factor = 10
-const hashedPassword = await bcryptjs.hash(password, salt);
-
-// Login — verification
-const validPassword = await bcryptjs.compare(inputPassword, storedHash);
-```
-
 > A **salt** is random data added before hashing, ensuring two identical passwords produce different hashes — defeating rainbow table attacks.
 
 ---
 
 ### JWT (JSON Web Tokens)
 
-A JWT is a compact, URL-safe token with three base64-encoded parts separated by dots:
-
-```
-eyJhbGci...  .  eyJpZCI6IjY4...  .  SflKxwRJSMeK...
-   Header         Payload (claims)      Signature
-```
+A JWT is a compact, URL-safe token with three base64-encoded parts: **Header**, **Payload (claims)**, and **Signature**.
 
 In this project:
 - The **payload** holds `{ id, username, email }`
 - It is signed with `TOKEN_SECRET` so the server can verify authenticity
 - It expires after **1 day**
 - The client **never sees the raw token** — it lives in an HttpOnly cookie
-
-```ts
-jwt.sign(tokenData, process.env.TOKEN_SECRET!, { expiresIn: '1d' });
-jwt.verify(token, process.env.TOKEN_SECRET!); // throws if invalid or expired
-```
 
 ---
 
@@ -323,10 +273,6 @@ Setting the JWT in an `HttpOnly` cookie (instead of `localStorage`) means:
 - ✅ **JavaScript on the page cannot read it** — prevents XSS (Cross-Site Scripting) attacks from stealing tokens
 - ✅ Automatically sent with every same-origin request by the browser
 - ✅ The server fully controls the cookie lifecycle (set, clear, expire)
-
-```ts
-response.cookies.set('token', token, { httpOnly: true });
-```
 
 ---
 
@@ -363,9 +309,9 @@ The `connect()` function in `src/dbConfig/dbConfig.ts` establishes a Mongoose co
 
 ---
 
-## Email — Nodemailer + Mailtrap
+## Email — Resend
 
-Email is sent via **Nodemailer** using **Mailtrap** as the SMTP sandbox — perfect for development, as emails are captured and never delivered to real inboxes.
+Email is sent via **Resend** — a developer-friendly email API that delivers real transactional emails reliably.
 
 The `sendEmail` helper (`src/helpers/mailer.ts`) supports two email types:
 
@@ -396,11 +342,8 @@ TOKEN_SECRET=your_super_secret_jwt_key_here
 # Your app base domain (used in email verification links)
 DOMAIN=http://localhost:3000
 
-# Mailtrap SMTP credentials — get these from https://mailtrap.io
-MAILTRAP_SMTP_HOST=sandbox.smtp.mailtrap.io
-MAILTRAP_SMTP_PORT=2525
-MAILTRAP_SMTP_USER=your_mailtrap_user
-MAILTRAP_SMTP_PASS=your_mailtrap_password
+# Resend API key — get this from https://resend.com
+RESEND_API_KEY=re_your_resend_api_key_here
 ```
 
 > ⚠️ **Never commit your `.env` file.** It is already listed in `.gitignore`.
@@ -413,7 +356,7 @@ MAILTRAP_SMTP_PASS=your_mailtrap_password
 
 - Node.js ≥ 18
 - A [MongoDB Atlas](https://www.mongodb.com/atlas) account (or local MongoDB running)
-- A [Mailtrap](https://mailtrap.io/) free account for email testing
+- A [Resend](https://resend.com/) account for sending emails
 
 ### Installation
 
