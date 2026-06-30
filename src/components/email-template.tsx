@@ -1,15 +1,17 @@
-import { Html } from '@react-email/html';
-import { Head } from '@react-email/head';
-import { Font } from '@react-email/font';
-import { Preview } from '@react-email/preview';
-import { Body } from '@react-email/body';
-import { Container } from '@react-email/container';
-import { Section } from '@react-email/section';
-import { Text } from '@react-email/text';
-import { Button } from '@react-email/button';
-import { Hr } from '@react-email/hr';
-import { Link } from '@react-email/link';
-import { Heading } from '@react-email/heading';
+import {
+  Html,
+  Head,
+  Font,
+  Preview,
+  Body,
+  Container,
+  Section,
+  Text,
+  Button,
+  Hr,
+  Link,
+  Heading,
+} from 'react-email';
 
 interface VerificationEmailProps {
   username?: string;

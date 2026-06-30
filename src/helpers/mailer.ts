@@ -1,8 +1,6 @@
-import nodemailer from 'nodemailer';
 import User from '@/models/userModel';
 import bcryptjs from 'bcryptjs';
 import VerificationEmail from '@/components/email-template';
-import { render } from '@react-email/render';
 
 import { Resend } from 'resend';
 
